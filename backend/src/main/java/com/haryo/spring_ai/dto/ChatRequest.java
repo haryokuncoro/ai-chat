@@ -16,7 +16,7 @@ public class ChatRequest {
     @Schema(example = "gpt-4.1-mini")
     String model;
 
-    @Schema(example = "CHAT | JAVA_MENTOR | CODE_REVIEWER | SOFTWARE_ARCHITECT")
+    @Schema(example = "CHAT | CODE_REVIEWER")
     AssistantMode mode;
 
     @Schema(example = "Explain Java Stream API")

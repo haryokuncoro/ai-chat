@@ -28,46 +28,41 @@ public class ChatService {
 
     @Transactional
     public String chat(ChatRequest request) {
-        UUID sessionId = request.getSessionId();
-        updateSession(sessionId, request.getPrompt());
-        chatHistoryService.saveUserMessage(sessionId, request.getPrompt());
-        List<Message> history = chatHistoryService.getHistory(sessionId);
-        List<Message> messages = new ArrayList<>();
-        String systemPrompt = systemPromptProvider.getPrompt(request.getMode());
-        messages.add(new SystemMessage(systemPrompt));
-
-        messages.addAll(history);
-        Prompt prompt =
-                new Prompt(messages);
-        String response =  factory.getStrategy(request.getProvider())
-                .chat(
-                        request.getModel(),
-                        prompt
-                );
-        chatHistoryService.saveAssistantMessage(sessionId, response);
+        Prompt prompt = buildPrompt(request);
+        String response = factory.getStrategy(request.getProvider()).chat(request.getModel(), prompt);
+        chatHistoryService.saveAssistantMessage(
+                request.getSessionId(),
+                response
+        );
         return response;
     }
 
     @Transactional
     public Flux<String> stream(ChatRequest request) {
-        UUID sessionId = request.getSessionId();
-        updateSession(sessionId, request.getPrompt());
-        chatHistoryService.saveUserMessage(sessionId, request.getPrompt());
-        List<Message> history = chatHistoryService.getHistory(sessionId);
-        List<Message> messages = new ArrayList<>();
-        String systemPrompt = systemPromptProvider.getPrompt(request.getMode());
-        messages.add(new SystemMessage(systemPrompt));
-
-        messages.addAll(history);
-        Prompt prompt =
-                new Prompt(messages);
+        Prompt prompt = buildPrompt(request);
         StreamRequest streamRequest = StreamRequest.builder()
-                .sessionId(sessionId)
+                .sessionId(request.getSessionId())
                 .model(request.getModel())
                 .prompt(prompt)
                 .build();
         return factory.getStrategy(request.getProvider())
                 .stream(streamRequest);
+    }
+
+    public Prompt buildPrompt(ChatRequest request) {
+        UUID sessionId = request.getSessionId();
+        updateSession(sessionId, request.getPrompt());
+        chatHistoryService.saveUserMessage(sessionId, request.getPrompt());
+
+        List<Message> messages = new ArrayList<>();
+        messages.add(
+                new SystemMessage(
+                        systemPromptProvider.getPrompt(request.getMode())
+                )
+        );
+
+        messages.addAll(chatHistoryService.getHistory(sessionId));
+        return new Prompt(messages);
     }
 
     public String createSession() {
