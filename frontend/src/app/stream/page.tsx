@@ -95,7 +95,6 @@ export default function StreamPage() {
               }`}
             >
               {message.role === "assistant" ? (
-                // ✅ Fixed: use MarkdownMessage so completed messages get highlighting
                 <div className="max-w-full text-gray-900">
                   <MarkdownMessage content={message.content} />
                 </div>
