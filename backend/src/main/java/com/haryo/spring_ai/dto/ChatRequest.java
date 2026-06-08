@@ -10,10 +10,10 @@ public class ChatRequest {
     @Schema(example = "UUID")
     UUID sessionId;
 
-    @Schema(example = "OPENAI")
+    @Schema(example = "OPENAI/OLLAMA")
     String provider;
 
-    @Schema(example = "gpt-4.1-mini")
+    @Schema(example = "gpt-4.1-mini/qwen2.5-coder:3b")
     String model;
 
     @Schema(example = "CHAT | CODE_REVIEWER")

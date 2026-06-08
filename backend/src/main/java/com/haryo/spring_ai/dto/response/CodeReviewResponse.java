@@ -7,4 +7,5 @@ import java.util.List;
 public class CodeReviewResponse {
     String summary;
     List<ReviewFinding> findings;
+    String fixedCode;
 }

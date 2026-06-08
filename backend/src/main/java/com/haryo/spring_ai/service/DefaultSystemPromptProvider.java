@@ -26,7 +26,8 @@ public class DefaultSystemPromptProvider implements SystemPromptProvider{
                   "severity": "LOW|MEDIUM|HIGH",
                   "message": "string"
                 }
-              ]
+              ],
+              "fixedCode" :"updated code with the fix"
             }
         """;
 

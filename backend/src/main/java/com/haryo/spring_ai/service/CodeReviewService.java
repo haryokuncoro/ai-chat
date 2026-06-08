@@ -28,17 +28,16 @@ public class CodeReviewService {
         UUID sessionId = request.getSessionId();
         chatService.updateSession(sessionId, request.getTitle());
         chatHistoryService.saveUserMessage(sessionId, request.getCode());
-        List<Message> history = chatHistoryService.getHistory(sessionId);
+
         List<Message> messages = new ArrayList<>();
         String systemPrompt = systemPromptProvider.getPrompt(AssistantMode.CODE_REVIEW);
         messages.add(new SystemMessage(systemPrompt));
+        messages.add(new SystemMessage(request.getCode()));
+        Prompt prompt = new Prompt(messages);
 
-        messages.addAll(history);
-        Prompt prompt =
-                new Prompt(messages);
         Object response = factory.getStrategy(request.getProvider())
                 .chat(
-                        null,
+                        request.getModel(),
                         prompt,
                         CodeReviewResponse.class
                 );
