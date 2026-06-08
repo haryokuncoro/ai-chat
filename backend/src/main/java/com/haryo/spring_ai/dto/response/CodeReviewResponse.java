@@ -7,5 +7,7 @@ import java.util.List;
 public class CodeReviewResponse {
     String summary;
     List<ReviewFinding> findings;
+    List<String> refactoringSuggestions;
+    List<String> testSuggestions;
     String fixedCode;
 }
